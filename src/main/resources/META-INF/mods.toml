@@ -1,0 +1,18 @@
+modLoader="javafml"
+loaderVersion="[28,)"
+issueTrackerURL="https://github.com/Lanse505/Epicurious/issues"
+[[mods]]
+modId="epicurious"
+version="${modVersion}"
+displayName="Epicurious"
+credits="Bananas are a great source of Potassium"
+authors="Lanse505" #optional
+description='''
+
+'''
+[[dependencies.examplemod]]
+    modId="titanium"
+    mandatory=true
+    versionRange="[2.2.9]"
+    ordering="NONE"
+    side="BOTH"
