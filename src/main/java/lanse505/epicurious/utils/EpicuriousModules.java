@@ -1,17 +1,20 @@
 package lanse505.epicurious.utils;
 
+import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.Feature;
 import com.hrznstudio.titanium.module.Module;
 import lanse505.epicurious.Epicurious;
-import lanse505.epicurious.content.ModBlocks;
 import lanse505.epicurious.content.crops.*;
 import lanse505.epicurious.content.farming.composting.CompostBinBlock;
 import lanse505.epicurious.content.farming.composting.CompostItem;
+import lanse505.epicurious.core.recipes.compost.CompostSerializableRecipe;
 import lanse505.epicurious.content.fermenting.YeastItem;
 import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class EpicuriousModules {
     public static final Module.Builder compost = Module.builder("compost")
@@ -26,7 +29,14 @@ public class EpicuriousModules {
                     Feature.builder("blocks")
                             .description("Blocks")
                             .content(Block.class, new CompostBinBlock().setRegistryName(new ResourceLocation(Epicurious.MODID, "compost_bin")))
+            )
+            .feature(
+                    Feature.builder("serializer")
+                            .description("Recipe Serializer")
+                            .content(IRecipeSerializer.class, (IRecipeSerializer) CompostSerializableRecipe.SERIALIZER)
+                            .event(EventManager.mod(FMLCommonSetupEvent.class).process(event -> Registry.register(Registry.RECIPE_TYPE, CompostSerializableRecipe.SERIALIZER.getRegistryName(), CompostSerializableRecipe.SERIALIZER.getRecipeType())))
             );
+
 
     public static final Module.Builder crops = Module.builder("crops")
             .force()

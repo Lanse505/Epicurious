@@ -1,0 +1,19 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"f f",
+		"f f",
+		"fsf"
+	],
+	"key": {
+		"f": {
+			"tag": "forge:fences"
+		},
+		"s": {
+			"tag": "minecraft:wooden_slabs"
+		}
+	},
+	"result": {
+		"item": "epicurious:compost_bin"
+	}
+}

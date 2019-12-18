@@ -2,27 +2,87 @@ package lanse505.epicurious.content.farming.composting;
 
 import com.hrznstudio.titanium.api.IFactory;
 import com.hrznstudio.titanium.block.BlockTileBase;
+import com.hrznstudio.titanium.recipe.generator.TitaniumLootTableProvider;
 import lanse505.epicurious.Epicurious;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.GlassBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapeCube;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CompostBinBlock extends BlockTileBase<CompostBinTile> {
 
     public CompostBinBlock() {
         super(Block.Properties.create(Material.WOOD).hardnessAndResistance(1.5f).sound(SoundType.WOOD), CompostBinTile.class);
         setItemGroup(Epicurious.epicurious);
+    }
+
+    @Override
+    public List<VoxelShape> getBoundingBoxes(BlockState state, IBlockReader source, BlockPos pos) {
+        List<VoxelShape> shapes = new ArrayList<>();
+        return super.getBoundingBoxes(state, source, pos);
+    }
+
+    @Override
+    public void createLootTable(TitaniumLootTableProvider provider) {
+        provider.createSimple(this);
+    }
+
+    @Override
+    public boolean canHarvestBlock(BlockState state, IBlockReader world, BlockPos pos, PlayerEntity player) {
+        return true;
+    }
+
+    @Override
+    public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
+        super.harvestBlock(worldIn, player, pos, state, te, stack);
+    }
+
+    @Override
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
+        return false;
+    }
+
+    @Override
+    public BlockRenderLayer getRenderLayer() {
+        return BlockRenderLayer.CUTOUT;
+    }
+
+    @Override
+    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos) {
+        return true;
+    }
+
+    @Override
+    public boolean canCreatureSpawn(BlockState state, IBlockReader world, BlockPos pos, EntitySpawnPlacementRegistry.PlacementType type, @Nullable EntityType<?> entityType) {
+        return false;
+    }
+
+    @Override
+    public IFactory<CompostBinTile> getTileEntityFactory() {
+        return CompostBinTile::new;
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
     }
 
     private CompostBinTile getTE(World world, BlockPos pos) {
@@ -37,39 +97,22 @@ public class CompostBinBlock extends BlockTileBase<CompostBinTile> {
 
     @Override
     public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult ray) {
+        if (worldIn.isRemote) {
+            return true;
+        }
+
         CompostBinTile tile = getTE(worldIn, pos);
 
         if (tile == null) {
             return false;
         }
 
-        if (worldIn.isRemote) {
-            return true;
+        ItemStack stack = player.getHeldItem(hand);
+        if (tile.getWorld() != null) {
+            player.addItemStackToInventory(tile.addCompost(player, stack));
         }
 
-        ItemStack stack = player.getHeldItemMainhand();
-
-
-        return super.onBlockActivated(state, worldIn, pos, player, hand, ray);
-    }
-
-    @Override
-    public boolean canHarvestBlock(BlockState state, IBlockReader world, BlockPos pos, PlayerEntity player) {
         return true;
     }
 
-    @Override
-    public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack) {
-        super.harvestBlock(worldIn, player, pos, state, te, stack);
-    }
-
-    @Override
-    public IFactory<CompostBinTile> getTileEntityFactory() {
-        return CompostBinTile::new;
-    }
-
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
 }
