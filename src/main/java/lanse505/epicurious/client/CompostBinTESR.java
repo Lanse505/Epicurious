@@ -2,45 +2,97 @@ package lanse505.epicurious.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import lanse505.epicurious.content.farming.composting.CompostBinTile;
+import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.item.*;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import org.lwjgl.opengl.GL11;
+
+import java.util.Random;
 
 public class CompostBinTESR extends TileEntityRenderer<CompostBinTile> {
-
+    
     public int compost;
-
+    
     @Override
     public void render(CompostBinTile te, double x, double y, double z, float partialTicks, int destroyStage) {
-        GlStateManager.pushTextureAttributes();
         GlStateManager.pushMatrix();
-
+        
         GlStateManager.translated(x, y, z);
-        GlStateManager.disableRescaleNormal();
-        renderFillAmount(te);
-
-        GlStateManager.popAttributes();
+        renderFillAmount(te, partialTicks);
+        
         GlStateManager.popMatrix();
     }
-
-    private void renderFillAmount(CompostBinTile te) {
-        ItemStack stack = new ItemStack(Items.COARSE_DIRT);
+    
+    private void renderFillAmount(CompostBinTile te, float partialTicks) {
         compost++;
-        if (compost >= 1) {
+        if(compost >= 1) {
             RenderHelper.enableStandardItemLighting();
-            GlStateManager.enableLighting();
+            GlStateManager.disableLighting();
             GlStateManager.pushMatrix();
-
-            GlStateManager.scalef(1.75f, compost * 0.025f, 1.75f);
-            GlStateManager.translatef(0.498f, compost * 0.0085f, 0.498f);
-
-            Minecraft.getInstance().getItemRenderer().renderItem(stack, ItemCameraTransforms.TransformType.FIXED);
-
+            
+            GlStateManager.translatef(1.5f/16f, 1f/16f, 1.5f/16f);
+            GlStateManager.scalef(13f/16f, (compost + partialTicks) * 0.0085f, 13f/16f);
+            
+            renderBlockModel(getWorld(), te.getPos(), Blocks.COARSE_DIRT.getDefaultState(), true);
+            
             GlStateManager.popMatrix();
+            GlStateManager.enableLighting();
         }
-        if (compost > 100) compost = 0;
+        if(compost > 100)
+            compost = 0;
+    }
+    
+    
+    public static void renderBlockModel(World world, BlockPos pos, BlockState state, boolean translateToOrigin) {
+        
+        buff().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+        if(translateToOrigin) {
+            buff().setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
+        }
+        final BlockRendererDispatcher blockrendererdispatcher = mc().getBlockRendererDispatcher();
+        final BlockModelShapes modelShapes = blockrendererdispatcher.getBlockModelShapes();
+        final IBakedModel ibakedmodel = modelShapes.getModel(state);
+        bind(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
+        for(final BlockRenderLayer layer : BlockRenderLayer.values()) {
+            if(state.getBlock().canRenderInLayer(state, layer)) {
+                ForgeHooksClient.setRenderLayer(layer);
+                blockrendererdispatcher.getBlockModelRenderer().renderModel(world, ibakedmodel, state, pos, buff(), false, new Random(), 0, EmptyModelData.INSTANCE);
+            }
+        }
+        ForgeHooksClient.setRenderLayer(null);
+        if(translateToOrigin) {
+            buff().setTranslation(0, 0, 0);
+        }
+        Tessellator.getInstance().draw();
+    }
+    
+    public static void bind(ResourceLocation texture) {
+        
+        mc().getTextureManager().bindTexture(texture);
+    }
+    
+    public static BufferBuilder buff() {
+        
+        return tess().getBuffer();
+    }
+    
+    public static Tessellator tess() {
+        
+        return Tessellator.getInstance();
+    }
+    
+    public static Minecraft mc() {
+        
+        return Minecraft.getInstance();
     }
 }
