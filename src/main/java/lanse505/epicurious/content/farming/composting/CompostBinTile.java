@@ -94,5 +94,4 @@ public class CompostBinTile extends TileBase {
         }
         return stack.getContainerItem();
     }
-
 }

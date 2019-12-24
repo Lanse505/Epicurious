@@ -7,34 +7,43 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CompostSerializableRecipe extends SerializableRecipe {
     public static GenericSerializer<CompostSerializableRecipe> SERIALIZER = new GenericSerializer<>(new ResourceLocation(Epicurious.MODID, "compost"), CompostSerializableRecipe.class);
     public static List<CompostSerializableRecipe> RECIPES = new ArrayList<>();
 
-    public NonNullList<Ingredient> compostables;
+    public Ingredient.IItemList compostable;
     public int value;
+
+    static {
+        new CompostSerializableRecipe(new ResourceLocation(Epicurious.MODID, "test_recipe"), new Ingredient.TagList(Tags.Items.SEEDS), 5);
+    }
 
     public CompostSerializableRecipe(ResourceLocation resourceLocation) {
         super(resourceLocation);
     }
 
-    public CompostSerializableRecipe(ResourceLocation resourceLocation, NonNullList<Ingredient> compostable, int value) {
+    public CompostSerializableRecipe(ResourceLocation resourceLocation, Ingredient.IItemList compostable, int value) {
         super(resourceLocation);
-        this.compostables = compostable;
+        this.compostable = compostable;
         this.value = value;
         RECIPES.add(this);
     }
 
+    public static List<CompostSerializableRecipe> getRECIPES() {
+        return RECIPES;
+    }
+
     @Override
     public boolean matches(IInventory inv, World worldIn) {
-        return compostables.stream().anyMatch(compostables -> compostables.test(inv.getStackInSlot(0)));
+        return false;
     }
 
     @Override
@@ -63,10 +72,6 @@ public class CompostSerializableRecipe extends SerializableRecipe {
     }
 
     public boolean isValid(ItemStack input) {
-        return compostables.stream().anyMatch(compostables -> compostables.test(input));
-    }
-
-    public static List<CompostSerializableRecipe> getRECIPES() {
-        return RECIPES;
+        return Ingredient.fromItemListStream(Arrays.asList(this.compostable).stream()).test(input);
     }
 }

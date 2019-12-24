@@ -3,29 +3,36 @@ package lanse505.epicurious.content.farming.composting;
 import com.hrznstudio.titanium.api.IFactory;
 import com.hrznstudio.titanium.block.BlockTileBase;
 import com.hrznstudio.titanium.recipe.generator.TitaniumLootTableProvider;
+import com.hrznstudio.titanium.recipe.generator.TitaniumShapedRecipeBuilder;
 import lanse505.epicurious.Epicurious;
+import lanse505.epicurious.content.ModBlocks;
+import lanse505.epicurious.core.recipes.compost.CompostSerializableRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.GlassBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapeCube;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CompostBinBlock extends BlockTileBase<CompostBinTile> {
 
@@ -115,4 +122,13 @@ public class CompostBinBlock extends BlockTileBase<CompostBinTile> {
         return true;
     }
 
+    @Override
+    public void registerRecipe(Consumer<IFinishedRecipe> consumer) {
+        TitaniumShapedRecipeBuilder.shapedRecipe(ModBlocks.compostBinBlock.asItem())
+                .patternLine("f f")
+                .patternLine("f f")
+                .patternLine("fsf")
+                .key('f', Ingredient.fromTag(Tags.Items.FENCES)).key('s', Ingredient.fromTag(ItemTags.WOODEN_SLABS))
+                .build(consumer);
+    }
 }
