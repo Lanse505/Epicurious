@@ -1,0 +1,7 @@
+{
+  "type": "epicurious:compost",
+  "compostable": {
+    "tag": "forge:slimeballs"
+  },
+  "value": "15"
+}

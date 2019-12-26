@@ -1,0 +1,7 @@
+{
+  "type": "epicurious:compost",
+  "compostable": {
+    "tag": "minecraft:cooked_cod"
+  },
+  "value": "20"
+}
