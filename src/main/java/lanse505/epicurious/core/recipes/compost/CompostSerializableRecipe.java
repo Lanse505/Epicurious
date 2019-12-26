@@ -19,12 +19,12 @@ public class CompostSerializableRecipe extends SerializableRecipe {
     public static GenericSerializer<CompostSerializableRecipe> SERIALIZER = new GenericSerializer<>(new ResourceLocation(Epicurious.MODID, "compost"), CompostSerializableRecipe.class);
     public static List<CompostSerializableRecipe> RECIPES = new ArrayList<>();
 
-    public Ingredient.IItemList compostable;
-    public int value;
-
     static {
         new CompostSerializableRecipe(new ResourceLocation(Epicurious.MODID, "test_recipe"), new Ingredient.TagList(Tags.Items.SEEDS), 5);
     }
+
+    public Ingredient.IItemList compostable;
+    public int value;
 
     public CompostSerializableRecipe(ResourceLocation resourceLocation) {
         super(resourceLocation);

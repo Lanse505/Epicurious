@@ -83,7 +83,7 @@ public class CompostBinTESR extends TileEntityRenderer<CompostBinTile> {
             GlStateManager.pushMatrix();
 
             GlStateManager.translatef(1.5f / 16f, 1f / 16f, 1.5f / 16f);
-            GlStateManager.scalef(13f / 16f, (te.getCompost() + partialTicks) * 0.0085f, 13f / 16f);
+            GlStateManager.scalef(13f / 16f, (te.getCompost()) * 0.0085f, 13f / 16f);
 
             renderBlockModel(getWorld(), te.getPos(), Blocks.COARSE_DIRT.getDefaultState(), true);
 

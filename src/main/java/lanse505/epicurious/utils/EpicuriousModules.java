@@ -1,6 +1,5 @@
 package lanse505.epicurious.utils;
 
-import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.Feature;
 import com.hrznstudio.titanium.module.Module;
 import lanse505.epicurious.Epicurious;
@@ -8,26 +7,18 @@ import lanse505.epicurious.content.crops.*;
 import lanse505.epicurious.content.farming.composting.CompostBinBlock;
 import lanse505.epicurious.content.farming.composting.CompostItem;
 import lanse505.epicurious.content.fermenting.YeastItem;
-import lanse505.epicurious.core.recipes.compost.CompostSerializableRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 public class EpicuriousModules {
     public static final Module.Builder compost = Module.builder("compost")
             .force()
             .description("compost")
             .feature(
-                    Feature.builder("items")
-                            .description("Items")
+                    Feature.builder("compost")
+                            .description("Compost-Related")
                             .content(Item.class, new CompostItem().setRegistryName(new ResourceLocation(Epicurious.MODID, "compost")))
-            )
-            .feature(
-                    Feature.builder("blocks")
-                            .description("Blocks")
                             .content(Block.class, new CompostBinBlock().setRegistryName(new ResourceLocation(Epicurious.MODID, "compost_bin")))
             );
 

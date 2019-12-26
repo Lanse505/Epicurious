@@ -46,6 +46,12 @@ minecraft {
                 }
             }
         }
+        data {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            args '--mod', 'epicurious', '--all', '--output', file('src/main/resources'), '--input', file('src/main/resources')
+            source sourceSets.main
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-package lanse505.epicurious.core.recipes;
+package lanse505.epicurious.core.recipes.serializers;
 
 import com.hrznstudio.titanium.recipe.generator.IJSONGenerator;
 import com.hrznstudio.titanium.recipe.generator.IJsonFile;
@@ -10,7 +10,6 @@ import net.minecraft.data.DataGenerator;
 import java.util.Map;
 
 public class EpicuriousSerializableProvider extends TitaniumSerializableProvider {
-
     public EpicuriousSerializableProvider(DataGenerator generatorIn) {
         super(generatorIn, Epicurious.MODID);
     }

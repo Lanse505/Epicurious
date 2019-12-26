@@ -31,7 +31,7 @@ public class CompostBinTile extends TileBase {
             if (stack.hasContainerItem()) {
                 currentStack = handleContainerItem(playerEntity, stack);
             } else {
-                currentStack = handleHeldItem(playerEntity, stack);
+                currentStack = handleHeldItem(stack);
             }
 
             while (compost >= 100) {
@@ -61,35 +61,26 @@ public class CompostBinTile extends TileBase {
         return compost;
     }
 
-    private ItemStack handleHeldItem(PlayerEntity playerEntity, ItemStack stack) {
-        Collection<CompostSerializableRecipe> recipes = RecipeUtil.getRecipes(playerEntity.world, CompostSerializableRecipe.SERIALIZER.getRecipeType());
+    private ItemStack handleHeldItem(ItemStack stack) {
         if (lastRecipe == null || !lastRecipe.isValid(stack)) {
-            for (CompostSerializableRecipe recipe : recipes) {
-                if (recipe.isValid(stack)) {
-                    compost += recipe.value;
-                    stack.shrink(1);
-                    lastRecipe = recipe;
-                    break;
-                }
-            }
-        } else {
+            lastRecipe = this.getWorld().getRecipeManager().getRecipes()
+                    .stream().filter(recipe -> recipe.getType() == CompostSerializableRecipe.SERIALIZER.getRecipeType())
+                    .map(recipe -> (CompostSerializableRecipe) recipe).filter(compostSerializableRecipe -> compostSerializableRecipe.isValid(stack)).findFirst().orElse(null);
+        }
+        if (lastRecipe != null) {
             compost += lastRecipe.value;
             stack.shrink(1);
         }
-        return stack;
+        return ItemStack.EMPTY;
     }
 
     private ItemStack handleContainerItem(PlayerEntity playerEntity, ItemStack stack) {
-        Collection<CompostSerializableRecipe> recipes = RecipeUtil.getRecipes(playerEntity.world, CompostSerializableRecipe.SERIALIZER.getRecipeType());
         if (lastRecipe == null || !lastRecipe.isValid(stack)) {
-            for (CompostSerializableRecipe recipe : recipes) {
-                if (recipe.isValid(stack)) {
-                    compost += recipe.value;
-                    lastRecipe = recipe;
-                    break;
-                }
-            }
-        } else {
+            lastRecipe = this.getWorld().getRecipeManager().getRecipes()
+                    .stream().filter(recipe -> recipe.getType() == CompostSerializableRecipe.SERIALIZER.getRecipeType())
+                    .map(recipe -> (CompostSerializableRecipe) recipe).filter(compostSerializableRecipe -> compostSerializableRecipe.isValid(stack)).findFirst().orElse(null);
+        }
+        if (lastRecipe != null) {
             compost += lastRecipe.value;
         }
         return stack.getContainerItem();

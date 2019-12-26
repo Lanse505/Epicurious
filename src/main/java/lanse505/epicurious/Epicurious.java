@@ -2,23 +2,18 @@ package lanse505.epicurious;
 
 import com.hrznstudio.titanium.event.handler.EventManager;
 import com.hrznstudio.titanium.module.ModuleController;
-import com.hrznstudio.titanium.recipe.generator.TitaniumLootTableProvider;
 import com.hrznstudio.titanium.recipe.generator.titanium.DefaultLootTableProvider;
 import lanse505.epicurious.client.CompostBinTESR;
 import lanse505.epicurious.content.ModItems;
 import lanse505.epicurious.content.farming.composting.CompostBinTile;
-import lanse505.epicurious.core.recipes.EpicuriousRecipeProvider;
-import lanse505.epicurious.core.recipes.EpicuriousSerializableProvider;
 import lanse505.epicurious.core.recipes.compost.CompostSerializableRecipe;
+import lanse505.epicurious.core.recipes.EpicuriousRecipeProvider;
+import lanse505.epicurious.core.recipes.serializers.EpicuriousSerializableProvider;
 import lanse505.epicurious.utils.EpicuriousModules;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -49,6 +44,8 @@ public class Epicurious extends ModuleController {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
         MinecraftForge.EVENT_BUS.register(this);
+        EventManager.mod(RegistryEvent.Register.class).filter(register -> register.getGenericType().equals(IRecipeSerializer.class))
+                .process(register -> register.getRegistry().registerAll(CompostSerializableRecipe.SERIALIZER)).subscribe();
     }
 
     @Override
@@ -59,8 +56,7 @@ public class Epicurious extends ModuleController {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        EventManager.mod(RegistryEvent.Register.class).filter(register -> register.getGenericType().equals(IRecipeSerializer.class))
-                .process(register -> register.getRegistry().registerAll(CompostSerializableRecipe.SERIALIZER)).subscribe();
+
 
     }
 
