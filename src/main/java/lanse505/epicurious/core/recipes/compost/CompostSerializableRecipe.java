@@ -9,7 +9,6 @@ import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Tags;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,18 +18,14 @@ public class CompostSerializableRecipe extends SerializableRecipe {
     public static GenericSerializer<CompostSerializableRecipe> SERIALIZER = new GenericSerializer<>(new ResourceLocation(Epicurious.MODID, "compost"), CompostSerializableRecipe.class);
     public static List<CompostSerializableRecipe> RECIPES = new ArrayList<>();
 
-    static {
-        new CompostSerializableRecipe(new ResourceLocation(Epicurious.MODID, "test_recipe"), new Ingredient.TagList(Tags.Items.SEEDS), 5);
-    }
-
-    public Ingredient.IItemList compostable;
+    public Ingredient.IItemList[] compostable;
     public int value;
 
     public CompostSerializableRecipe(ResourceLocation resourceLocation) {
         super(resourceLocation);
     }
 
-    public CompostSerializableRecipe(ResourceLocation resourceLocation, Ingredient.IItemList compostable, int value) {
+    public CompostSerializableRecipe(ResourceLocation resourceLocation, Ingredient.IItemList[] compostable, int value) {
         super(resourceLocation);
         this.compostable = compostable;
         this.value = value;
@@ -72,6 +67,6 @@ public class CompostSerializableRecipe extends SerializableRecipe {
     }
 
     public boolean isValid(ItemStack input) {
-        return Ingredient.fromItemListStream(Arrays.asList(this.compostable).stream()).test(input);
+        return Ingredient.fromItemListStream(Arrays.stream(this.compostable)).test(input);
     }
 }

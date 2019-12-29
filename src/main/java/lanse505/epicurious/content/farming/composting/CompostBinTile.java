@@ -1,7 +1,6 @@
 package lanse505.epicurious.content.farming.composting;
 
 import com.hrznstudio.titanium.block.tile.TileBase;
-import com.hrznstudio.titanium.util.RecipeUtil;
 import lanse505.epicurious.content.ModBlocks;
 import lanse505.epicurious.content.ModItems;
 import lanse505.epicurious.core.recipes.compost.CompostSerializableRecipe;
@@ -11,8 +10,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.util.math.MathHelper;
-
-import java.util.Collection;
 
 public class CompostBinTile extends TileBase {
     private int compost;

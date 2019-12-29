@@ -1,7 +1,0 @@
-{
-  "type": "epicurious:compost",
-  "compostable": {
-    "tag": "minecraft:cooked_salmon"
-  },
-  "value": "20"
-}

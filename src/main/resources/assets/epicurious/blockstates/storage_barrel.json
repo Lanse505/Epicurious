@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "sealed=true": {
+      "model": "epicurious:block/barrel_storage_sealed"
+    },
+    "sealed=false": {
+      "model": "epicurious:block/barrel_storage"
+    }
+  }
+}

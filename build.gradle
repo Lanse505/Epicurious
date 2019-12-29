@@ -69,7 +69,7 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    compile fg.deobf('com.hrznstudio:titanium:1.14.4-2.2.9')
+    compile fg.deobf('com.hrznstudio:titanium:1.14.4-2.2.11')
     compile fg.deobf('mezz.jei:jei-1.14.4:6.0.0.26')
     compile fg.deobf('mcp.mobius.waila:Hwyla:1.10.6-B67_1.14.4')
 }

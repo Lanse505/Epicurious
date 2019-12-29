@@ -4,7 +4,6 @@ import com.hrznstudio.titanium.recipe.generator.TitaniumRecipeProvider;
 import lanse505.epicurious.content.ModBlocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.IFinishedRecipe;
-import net.minecraftforge.common.Tags;
 
 import java.util.function.Consumer;
 

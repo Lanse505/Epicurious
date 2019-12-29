@@ -1,0 +1,24 @@
+{
+  "type": "epicurious:compost",
+  "compostable": [
+    {
+      "tag": "minecraft:cod"
+    },
+    {
+      "tag": "minecraft:cooked_cod"
+    },
+    {
+      "tag": "minecraft:salmon"
+    },
+    {
+      "tag": "minecraft:cooked_salmon"
+    },
+    {
+      "tag": "minecraft:tropical_fish"
+    },
+    {
+      "tag": "minecraft:pufferfish"
+    }
+  ],
+  "value": "20"
+}

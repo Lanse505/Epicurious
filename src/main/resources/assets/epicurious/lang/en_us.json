@@ -1,6 +1,9 @@
 {
 	"itemGroup.epicurious": "Epicurious",
 	"block.epicurious.compost_bin": "Compost Bin",
+	"block.epicurious.Brewing_barrel": "Brewing Barrel",
+	"block.epicurious.soaking_barrel": "Soaking Barrel",
+	"block.epicurious.storage_barrel": "Storage Barrel",
 	"item.epicurious.compost": "Compost",
 	"item.epicurious.corn": "Corn",
 	"item.epicurious.barley": "Barley",
@@ -8,5 +11,12 @@
 	"item.epicurious.grapes": "Grapes",
 	"item.epicurious.rice": "Rice",
 	"item.epicurious.rye": "Rye",
-	"item.epicurious.yeast": "Yeast"
+	"item.epicurious.yeast": "Yeast",
+	"tooltip.titanium.facing_handler.item_storage": "Item Storage",
+
+	"info.epicurious.barrel.input": "Input: ",
+	"info.epicurious.barrel.inventory": "Inventory:",
+	"info.epicurious.state.sealed": "Sealed:",
+	"info.epicurious.shift": "Press Shift for More Information!",
+	"info.epicurious.shiftl.ctrll": "Press Shift + L-Ctrl for Fluid Information"
 }
