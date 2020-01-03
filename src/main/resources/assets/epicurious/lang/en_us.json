@@ -15,6 +15,7 @@
 	"tooltip.titanium.facing_handler.item_storage": "Item Storage",
 
 	"info.epicurious.barrel.input": "Input: ",
+	"info.epicurious.barrel.output": "Output: ",
 	"info.epicurious.barrel.inventory": "Inventory:",
 	"info.epicurious.state.sealed": "Sealed:",
 	"info.epicurious.shift": "Press Shift for More Information!",

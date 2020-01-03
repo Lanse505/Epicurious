@@ -29,6 +29,7 @@ public class BiomeRainSerializableRecipe extends SerializableRecipe {
         super(resourceLocation);
         this.biome = biome;
         this.fluidStack = fluidStack;
+        RECIPES.add(this);
     }
 
     @Override

@@ -1,0 +1,9 @@
+{
+  "compostable": [
+    {
+      "tag": "forge:heads"
+    }
+  ],
+  "value": 25,
+  "type": "epicurious:compost"
+}

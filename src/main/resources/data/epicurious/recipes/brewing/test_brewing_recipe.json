@@ -1,0 +1,24 @@
+{
+  "conditions": [
+    {
+      "fluid": "minecraft:water",
+      "type": "epicurious:fluid_exists"
+    },
+    {
+      "fluid": "minecraft:lava",
+      "type": "epicurious:fluid_exists"
+    }
+  ],
+  "brewableFluid": "{FluidName:\"minecraft:water\",Amount:1000}",
+  "brewingIngredients": [
+    {
+      "item": "minecraft:diamond"
+    },
+    {
+      "tag": "forge:heads"
+    }
+  ],
+  "brewedFluid": "{FluidName:\"minecraft:lava\",Amount:1000}",
+  "ticks": 50,
+  "type": "epicurious:brewing"
+}

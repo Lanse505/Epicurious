@@ -11,6 +11,6 @@ public class EpicuriousReferenceObjects {
     @ObjectHolder("minecraft:sponge")
     public static SpongeBlock spongeBlock;
 
-     @ObjectHolder("minecraft:wet_sponge")
+    @ObjectHolder("minecraft:wet_sponge")
     public static WetSpongeBlock wetSpongeBlock;
 }

@@ -36,6 +36,7 @@ public class SoakingSerializableRecipe extends SerializableRecipe {
         this.soaked = soaked;
         this.fluidUseChance = fluidUseChance;
         this.ticks = ticks;
+        RECIPES.add(this);
     }
 
     @Override

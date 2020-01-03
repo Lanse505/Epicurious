@@ -1,0 +1,27 @@
+{
+  "compostable": [
+    {
+      "tag": "forge:seeds"
+    },
+    {
+      "tag": "forge:seeds/pumpkin"
+    },
+    {
+      "tag": "forge:seeds/beetroot"
+    },
+    {
+      "tag": "forge:seeds/melon"
+    },
+    {
+      "tag": "forge:seeds/wheat"
+    },
+    {
+      "tag": "forge:mushrooms"
+    },
+    {
+      "tag": "forge:string"
+    }
+  ],
+  "value": 5,
+  "type": "epicurious:compost"
+}

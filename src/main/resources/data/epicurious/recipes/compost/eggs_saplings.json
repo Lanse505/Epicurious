@@ -1,0 +1,12 @@
+{
+  "compostable": [
+    {
+      "tag": "minecraft:saplings"
+    },
+    {
+      "tag": "forge:eggs"
+    }
+  ],
+  "value": 10,
+  "type": "epicurious:compost"
+}

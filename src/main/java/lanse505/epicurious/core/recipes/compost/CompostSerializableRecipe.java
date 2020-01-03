@@ -9,12 +9,13 @@ import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CompostSerializableRecipe extends SerializableRecipe {
+public class CompostSerializableRecipe extends SerializableRecipe implements IConditionBuilder {
     public static GenericSerializer<CompostSerializableRecipe> SERIALIZER = new GenericSerializer<>(new ResourceLocation(Epicurious.MODID, "compost"), CompostSerializableRecipe.class);
     public static List<CompostSerializableRecipe> RECIPES = new ArrayList<>();
 

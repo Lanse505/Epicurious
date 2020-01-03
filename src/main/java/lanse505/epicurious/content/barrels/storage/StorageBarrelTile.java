@@ -38,17 +38,17 @@ public class StorageBarrelTile extends BarrelTileBase {
 
     public StorageBarrelTile() {
         super(ModBlocks.storageBarrelBlock);
-        this.addInventory(storage = (SidedInvHandler) new SidedInvHandler("item_storage", 62, 25, 9, 0).setTile(this).setRange(3, 3).setInputFilter((itemStack, integer) -> {
-            if (!isSealed()) {
+        this.addInventory(storage = (SidedInvHandler) new SidedInvHandler("storage", 62, 25, 9, 0).setTile(this).setRange(3, 3).setInputFilter((itemStack, integer) -> {
+            if (!isSealed() && !itemStack.getItem().equals(ModBlocks.storageBarrelBlock.asItem())) {
                 return IItemStackQuery.ANYTHING.test(itemStack);
             }
             return false;
         }));
-        this.addTank(tank = new PosFluidTank("fluid_storage", 32000, 133, 23).setTile(this));
+        this.addTank(tank = new PosFluidTank("fluid_storage", EpicuriousConfigs.getInstance().getBarrels().getStorage().storageTankSize.get(), 133, 23).setTile(this));
         this.addButton(button = new PosButton(-13, 1, 14, 14) {
             @Override
             public List<IFactory<? extends IGuiAddon>> getGuiAddons() {
-                                                                                                                        //TODO: Add proper asset                                           //TODO: Add Proper Asset
+                //TODO: Add proper asset                                           //TODO: Add Proper Asset
                 return Collections.singletonList(() -> new StateButtonAddon(button, new StateButtonInfo(0, AssetTypes.BUTTON_SIDENESS_DISABLED), new StateButtonInfo(1, AssetTypes.BUTTON_SIDENESS_ENABLED)) {
                     @Override
                     public int getState() {

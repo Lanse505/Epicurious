@@ -3,7 +3,7 @@ package lanse505.epicurious.utils;
 import com.hrznstudio.titanium.module.Feature;
 import com.hrznstudio.titanium.module.Module;
 import lanse505.epicurious.Epicurious;
-import lanse505.epicurious.content.ModBlocks;
+import lanse505.epicurious.content.barrels.brewing.BrewingBarrelBlock;
 import lanse505.epicurious.content.barrels.storage.StorageBarrelBlock;
 import lanse505.epicurious.content.crops.*;
 import lanse505.epicurious.content.farming.composting.CompostBinBlock;
@@ -39,8 +39,9 @@ public class EpicuriousModules {
             .description("Barrels")
             .feature(
                     Feature.builder("barrels")
-                        .description("Barrels")
-                        .content(Block.class, new StorageBarrelBlock().setRegistryName(new ResourceLocation(Epicurious.MODID, "storage_barrel")))
+                            .description("Barrels")
+                            .content(Block.class, new BrewingBarrelBlock().setRegistryName(new ResourceLocation(Epicurious.MODID, "brewing_barrel")))
+                            .content(Block.class, new StorageBarrelBlock().setRegistryName(new ResourceLocation(Epicurious.MODID, "storage_barrel")))
             );
 
     public static final Module.Builder fermenting = Module.builder("fermenting")

@@ -1,0 +1,9 @@
+{
+  "compostable": [
+    {
+      "tag": "minecraft:fishes"
+    }
+  ],
+  "value": 20,
+  "type": "epicurious:compost"
+}

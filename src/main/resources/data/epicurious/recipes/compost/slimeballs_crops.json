@@ -1,0 +1,27 @@
+{
+  "compostable": [
+    {
+      "tag": "forge:slimeballs"
+    },
+    {
+      "tag": "forge:crops"
+    },
+    {
+      "tag": "forge:crops/beetroot"
+    },
+    {
+      "tag": "forge:crops/carrot"
+    },
+    {
+      "tag": "forge:crops/nether_wart"
+    },
+    {
+      "tag": "forge:crops/potato"
+    },
+    {
+      "tag": "forge:crops/wheat"
+    }
+  ],
+  "value": 15,
+  "type": "epicurious:compost"
+}

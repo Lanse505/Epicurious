@@ -12,6 +12,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class BrewingSerializableRecipe extends SerializableRecipe {
     public static List<BrewingSerializableRecipe> RECIPES = new ArrayList<>();
 
     public FluidStack brewableFluid;
-    public Ingredient.IItemList[] brewingIngredients;
+    public Ingredient[] brewingIngredients;
     public FluidStack brewedFluid;
     public int ticks;
 
@@ -30,12 +31,13 @@ public class BrewingSerializableRecipe extends SerializableRecipe {
         super(resourceLocation);
     }
 
-    public BrewingSerializableRecipe(ResourceLocation resourceLocation, FluidStack brewableFluid, Ingredient.IItemList[] brewingIngredients, FluidStack brewedFluid, int ticks) {
+    public BrewingSerializableRecipe(ResourceLocation resourceLocation, FluidStack brewableFluid, Ingredient[] brewingIngredients, FluidStack brewedFluid, int ticks) {
         super(resourceLocation);
         this.brewableFluid = brewableFluid;
         this.brewingIngredients = brewingIngredients;
         this.brewedFluid = brewedFluid;
         this.ticks = ticks;
+        RECIPES.add(this);
     }
 
     @Override
@@ -68,15 +70,15 @@ public class BrewingSerializableRecipe extends SerializableRecipe {
         return SERIALIZER.getRecipeType();
     }
 
-    public boolean isValid(FluidStack storedBrewableFluid, IInventory inventory) {
+    public boolean isValid(FluidStack storedBrewableFluid, ItemStackHandler inventory) {
         boolean fluid = storedBrewableFluid != null && storedBrewableFluid.containsFluid(this.brewableFluid);
         IntList usedSlots = new IntArrayList(3);
         IntList matchedSlots = new IntArrayList(3);
         int counter = 0;
-        for (Ingredient.IItemList i : this.brewingIngredients) {
+        for (Ingredient i : this.brewingIngredients) {
             for (int idx = 0; idx < 3; idx++) {
                 ItemStack s = inventory.getStackInSlot(idx);
-                if (!matchedSlots.contains(counter) && Ingredient.fromItemListStream(Stream.of(i)).test(s) && !usedSlots.contains(idx)) {
+                if (!matchedSlots.contains(counter) && i.test(s) && !usedSlots.contains(idx)) {
                     usedSlots.add(idx);
                     matchedSlots.add(counter);
                 }

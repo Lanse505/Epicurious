@@ -1,7 +1,0 @@
-{
-  "type": "epicurious:compost",
-  "compostable": {
-    "tag": "forge:seeds"
-  },
-  "value": "5"
-}

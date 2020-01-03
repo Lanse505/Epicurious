@@ -1,37 +1,26 @@
 package lanse505.epicurious.content.barrels.storage;
 
 import com.hrznstudio.titanium.api.IFactory;
-import com.hrznstudio.titanium.block.tile.fluid.PosFluidTank;
-import lanse505.epicurious.Epicurious;
 import lanse505.epicurious.content.ModBlocks;
 import lanse505.epicurious.content.barrels.BarrelBlockBase;
 import lanse505.epicurious.content.barrels.BarrelTileBase;
 import lanse505.epicurious.utils.EpicuriousReferenceObjects;
 import lanse505.epicurious.utils.configs.EpicuriousConfigs;
-import net.java.games.input.Controller;
-import net.java.games.input.Keyboard;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.ClockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.datafix.fixes.LWJGL3KeyOptions;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
@@ -39,13 +28,13 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.lwjgl.glfw.GLFW;
 
 import javax.annotation.Nullable;
@@ -63,14 +52,33 @@ public class StorageBarrelBlock extends BarrelBlockBase<StorageBarrelTile> {
     }
 
     @Override
+    public NonNullList<ItemStack> getDynamicDrops(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (state.get(SEALED)) {
+            return NonNullList.create();
+        } else {
+            NonNullList<ItemStack> stacks = NonNullList.create();
+            TileEntity tileentity = worldIn.getTileEntity(pos);
+            if (tileentity != null) {
+                tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent((iItemHandler) -> {
+                    for (int i = 0; i < iItemHandler.getSlots(); ++i) {
+                        stacks.add(iItemHandler.getStackInSlot(i));
+                    }
+                });
+                stacks.add(new ItemStack(ModBlocks.storageBarrelBlock.asItem(), 1));
+            }
+            return stacks;
+        }
+    }
+
+    @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        TileEntity te = worldIn.getTileEntity(pos);
-        if (te instanceof StorageBarrelTile) {
-            StorageBarrelTile storageBarrelTile = (StorageBarrelTile) te;
+        BarrelTileBase btb = getTE(worldIn, pos);
+        if (btb instanceof StorageBarrelTile) {
+            StorageBarrelTile storageBarrelTile = (StorageBarrelTile) btb;
             if (stack.getTag() != null) {
                 storageBarrelTile.getBlockState().with(SEALED, stack.getTag().getBoolean("Sealed"));
-                storageBarrelTile.getStorage().deserializeNBT(stack.getTag().getCompound("BlockEntityTag").getCompound("items"));
-                storageBarrelTile.getTank().readFromNBT(stack.getTag());
+                storageBarrelTile.getStorage().deserializeNBT(stack.getTag().getCompound("BlockEntityTag"));
+                storageBarrelTile.getTank().readFromNBT(stack.getTag().getCompound("Tank"));
             } else {
                 state.with(SEALED, false);
             }
@@ -79,7 +87,7 @@ public class StorageBarrelBlock extends BarrelBlockBase<StorageBarrelTile> {
 
     @Override
     public void onBlockHarvested(World worldIn, BlockPos pos, BlockState state, PlayerEntity player) {
-        TileEntity tileEntity = getTE(worldIn, pos);
+        BarrelTileBase tileEntity = getTE(worldIn, pos);
         if (tileEntity instanceof StorageBarrelTile) {
             StorageBarrelTile storageBarrelTile = (StorageBarrelTile) tileEntity;
             if (state.get(SEALED)) {
@@ -94,15 +102,9 @@ public class StorageBarrelBlock extends BarrelBlockBase<StorageBarrelTile> {
 
                 stack.setTag(compoundNBT);
 
-                ItemEntity entity = new ItemEntity(worldIn, (double) pos.getX(), (double) pos.getY(), (double) pos.getZ(), stack);
+                ItemEntity entity = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack);
                 entity.setDefaultPickupDelay();
                 worldIn.addEntity(entity);
-                return;
-            } else {
-                for (int i = 0; i < storageBarrelTile.getStorage().getSlots(); i++) {
-                    ItemStack stacks = storageBarrelTile.getStorage().getStackInSlot(i);
-                    player.inventory.addItemStackToInventory(stacks);
-                }
                 return;
             }
         }
@@ -151,11 +153,6 @@ public class StorageBarrelBlock extends BarrelBlockBase<StorageBarrelTile> {
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(SEALED);
-    }
-
-    @Override
     public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
@@ -166,46 +163,42 @@ public class StorageBarrelBlock extends BarrelBlockBase<StorageBarrelTile> {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-        long handle = Minecraft.getInstance().mainWindow.getHandle();
-        if (InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_LEFT_SHIFT)) {
-            if (stack.hasTag()) {
-                tooltip.add(new TranslationTextComponent("info.epicurious.state.sealed")
-                        .applyTextStyle(TextFormatting.GRAY)
-                        .appendText(String.valueOf(stack.getTag().getBoolean("Sealed")))
-                        .applyTextStyle(TextFormatting.WHITE));
-                //tooltip.add(new StringTextComponent(stack.getTag().toString()));
-            }
-        } else {
-            tooltip.add(new TranslationTextComponent("info.epicurious.shift"));
-        }
+                public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+                    if (stack != null && stack.hasTag()) {
+                        long handle = Minecraft.getInstance().mainWindow.getHandle();
+                        CompoundNBT compound = stack.getTag();
 
-        if (stack != null && stack.hasTag()) {
-            CompoundNBT compound = stack.getTag();
-            CompoundNBT tag = stack.getChildTag("BlockEntityTag");
-            if (InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_LEFT_SHIFT)) {
-                if (compound != null && !compound.getCompound("Tank").isEmpty()) {
-                    FluidTank fluidTank = new FluidTank(EpicuriousConfigs.getInstance().getBarrels().getStorage().storageTankSize.get());
-                    FluidStack fluidStack = fluidTank.readFromNBT(compound.getCompound("Tank")).getFluid();
-                    if (!fluidStack.isEmpty()) {
-                        if (InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_LEFT_CONTROL)) {
-                            tooltip.add(new TranslationTextComponent("info.epicurious.barrel.input")
-                                    .applyTextStyle(TextFormatting.GRAY)
-                                    .appendText(fluidStack.getDisplayName() + ": " + fluidStack.getAmount())
-                                    .applyTextStyle(TextFormatting.WHITE));
-                        } else if (!InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_LEFT_CONTROL)) {
-                            tooltip.add(new TranslationTextComponent("info.epicurious.shiftl.ctrll").applyTextStyle(TextFormatting.GRAY));
+                        if (InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_LEFT_SHIFT)) {
+                            if (stack.hasTag()) {
+                                String state = String.valueOf(stack.getTag().getBoolean("Sealed")).replace("t", "T");
+                                tooltip.add(new TranslationTextComponent("info.epicurious.state.sealed").applyTextStyle(TextFormatting.GRAY).appendSibling(new StringTextComponent(" " + state).applyTextStyle(stack.getTag().getBoolean("Sealed") ? TextFormatting.GREEN : TextFormatting.RED)));
+                            }
+                        } else {
+                            tooltip.add(new TranslationTextComponent("info.epicurious.shift"));
                         }
-                    }
-                }
 
-                if (compound != null && !tag.getCompound("Items").isEmpty()) {
+                        if (InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_LEFT_SHIFT)) {
+                            if (compound != null && !compound.getCompound("Tank").isEmpty()) {
+                                FluidTank fluidTank = new FluidTank(EpicuriousConfigs.getInstance().getBarrels().getStorage().storageTankSize.get());
+                                FluidStack fluidStack = fluidTank.readFromNBT(compound.getCompound("Tank")).getFluid();
+                                if (!fluidStack.isEmpty()) {
+                                    if (InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_LEFT_CONTROL)) {
+                                        tooltip.add(new TranslationTextComponent("info.epicurious.barrel.input").applyTextStyle(TextFormatting.GRAY));
+                                        tooltip.add(new StringTextComponent(" ").appendSibling(fluidStack.getDisplayName().applyTextStyle(TextFormatting.AQUA).applyTextStyle(TextFormatting.ITALIC).appendSibling(new StringTextComponent(" ").applyTextStyle(TextFormatting.GRAY)).appendSibling(new StringTextComponent(fluidStack.getAmount() + "mB").applyTextStyle(TextFormatting.WHITE))));
+                                    } else if (!InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_LEFT_CONTROL)) {
+                                        tooltip.add(new TranslationTextComponent("info.epicurious.shiftl.ctrll").applyTextStyle(TextFormatting.GRAY));
+                                    }
+                                }
+                            }
+
+                CompoundNBT tag = stack.getTag() != null ? stack.getTag().getCompound("BlockEntityTag") : new CompoundNBT();
+                if (tag.getCompound("Items").isEmpty()) {
                     if (InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_RIGHT_CONTROL)) {
                         int c = 0;
                         int d = 0;
 
                         NonNullList<ItemStack> nonNullList = NonNullList.withSize(9, ItemStack.EMPTY);
-                        ItemStackHelper.loadAllItems(tag.getCompound("Items"), nonNullList);
+                        ItemStackHelper.loadAllItems(tag, nonNullList);
 
                         tooltip.add(new TranslationTextComponent("info.epicurious.barrel.inventory").applyTextStyle(TextFormatting.GRAY));
 
@@ -214,17 +207,17 @@ public class StorageBarrelBlock extends BarrelBlockBase<StorageBarrelTile> {
                                 ++d;
                                 if (c <= 4) {
                                     ++c;
-                                    tooltip.add(new StringTextComponent(String.format(" %dx %s", itemstack.getCount(), itemstack.getDisplayName()) + TextFormatting.WHITE));
+                                    tooltip.add(new StringTextComponent(" " + itemstack.getCount() + " ").applyTextStyle(TextFormatting.WHITE).appendSibling(itemstack.getDisplayName().applyTextStyle(TextFormatting.BLUE).applyTextStyle(TextFormatting.ITALIC)));
                                 }
                             }
                         }
                         if (d - c > 0) {
                             tooltip.add(new StringTextComponent(" ")
                                     .applyTextStyle(TextFormatting.ITALIC)
-                                    .appendSibling(new TranslationTextComponent("container.shulkerBox.more", c-d)));
+                                    .appendSibling(new TranslationTextComponent("container.shulkerBox.more", d - c)));
                         }
                     } else if (!InputMappings.isKeyDown(handle, GLFW.GLFW_KEY_RIGHT_CONTROL)) {
-                        tooltip.add(new StringTextComponent(TextFormatting.GRAY + "Press Shift + R-Ctrl for Item Information"));
+                        tooltip.add(new StringTextComponent("Press Shift + R-Ctrl for Item Information").applyTextStyle(TextFormatting.GRAY));
                     }
                 }
             } else if (!tooltip.contains(new TranslationTextComponent("info.epicurious.shift"))) {

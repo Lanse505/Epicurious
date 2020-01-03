@@ -1,4 +1,4 @@
-package lanse505.epicurious.core.recipes;
+package lanse505.epicurious.core.serializers;
 
 import com.hrznstudio.titanium.recipe.generator.TitaniumRecipeProvider;
 import lanse505.epicurious.content.ModBlocks;
