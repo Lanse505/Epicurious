@@ -69,24 +69,24 @@ public class BrewingBarrelTile extends BarrelTileBase {
             markForUpdate();
         }));
         this.addProgressBar(
-                bar = new PosProgressBar(20, 20, 0)
+                bar = new PosProgressBar(20, 20, 4000, 5000)
                 .setCanIncrease(tileEntity -> lastRecipe != null && isSealed() && isRecipeValidForContents())
-                .setBarDirection(PosProgressBar.BarDirection.HORIZONTAL_RIGHT)
+                //.setBarDirection(PosProgressBar.BarDirection.HORIZONTAL_RIGHT)
                 .setColor(DyeColor.LIGHT_BLUE)
-                .setOnFinishWork(this::finishBrewing)
+                //.setOnFinishWork(this::finishBrewing)
         );
         storage.setColor(DyeColor.BROWN);
     }
 
     @Override
     public void tick() {
-        processBrewing();
+        //processBrewing();
     }
 
     protected void processBrewing() {
-        checkRecipe();
-        setBarValues();
-        bar.tickBar();
+        //checkRecipe();
+        //setBarValues();
+        //bar.tickBar();
     }
 
     private void checkRecipe() {
@@ -98,7 +98,7 @@ public class BrewingBarrelTile extends BarrelTileBase {
     }
 
     private void setBarValues() {
-        if (lastRecipe != null && bar.getMaxProgress() != lastRecipe.ticks) {
+        if (lastRecipe != null && bar.getMaxProgress() != lastRecipe.ticks && lastRecipe.ticks > 0) {
             bar.setMaxProgress(lastRecipe.ticks);
         }
     }
@@ -115,7 +115,7 @@ public class BrewingBarrelTile extends BarrelTileBase {
     }
 
     public boolean isRecipeValidForContents() {
-        return lastRecipe.isValid(brewable.getFluid(), storage);
+        return lastRecipe.isValid(brewable.getFluid(), storage) && (brewed.isEmpty() || lastRecipe.brewedFluid.isFluidEqual(brewed.getFluid()));
     }
 
     public PosFluidTank getBrewable() {
